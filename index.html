@@ -6,15 +6,6 @@
     <title>Sal College Lost & Found System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-    
-    <!-- EmailJS for real email OTP -->
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    
     <style>
         .fade-in { animation: fadeIn 0.5s ease-in; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -22,7 +13,6 @@
         .timer-warning { color: #ef4444; font-weight: bold; }
         .success-animation { animation: bounce 0.6s ease-in-out; }
         @keyframes bounce { 0%, 20%, 53%, 80%, 100% { transform: translate3d(0,0,0); } 40%, 43% { transform: translate3d(0,-30px,0); } 70% { transform: translate3d(0,-15px,0); } 90% { transform: translate3d(0,-4px,0); } }
-        .loading { opacity: 0.6; pointer-events: none; }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
@@ -83,137 +73,11 @@
                         <input type="text" id="enrollmentInput" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g., SEC202401" required>
                     </div>
                     <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors">
-                        Verify Enrollment
+                        Continue
                     </button>
                 </form>
-                
-                <div class="mt-4 text-center">
-                    <button type="button" onclick="showPage('login')" class="text-blue-600 hover:text-blue-800 text-sm cursor-pointer">
-                        Already registered? Log in here
-                    </button>
-                </div>
                 
                 <div id="enrollmentError" class="mt-4 text-red-600 text-sm hidden"></div>
-            </div>
-        </div>
-
-        <!-- Login Page -->
-        <div id="login-page" class="fade-in hidden">
-            <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-8">
-                <div class="text-center mb-8">
-                    <i class="fas fa-sign-in-alt text-5xl text-blue-600 mb-4"></i>
-                    <h1 class="text-2xl font-bold text-gray-800 mb-2">Welcome Back</h1>
-                    <p class="text-gray-600">Log in to your account</p>
-                </div>
-                
-                <form onsubmit="loginUser(event)">
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-bold mb-2">Enrollment Number</label>
-                        <input type="text" id="loginEnrollment" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                    </div>
-                    <div class="mb-6">
-                        <label class="block text-gray-700 text-sm font-bold mb-2">Phone Number or Email</label>
-                        <input type="text" id="loginContact" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Phone or Email used during registration" required>
-                    </div>
-                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors">
-                        Send Login OTP
-                    </button>
-                </form>
-                
-                <div class="mt-4 text-center">
-                    <button type="button" onclick="showPage('enrollment')" class="text-blue-600 hover:text-blue-800 text-sm cursor-pointer">
-                        Back to Enrollment Verification
-                    </button>
-                </div>
-                
-                <div id="loginError" class="mt-4 text-red-600 text-sm hidden"></div>
-            </div>
-        </div>
-
-        <!-- Registration Page -->
-        <div id="registration-page" class="fade-in hidden">
-            <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8">
-                <div class="text-center mb-8">
-                    <i class="fas fa-user-plus text-5xl text-blue-600 mb-4"></i>
-                    <h1 class="text-2xl font-bold text-gray-800 mb-2">Complete Your Registration</h1>
-                    <p class="text-gray-600">Fill in your details to create your account</p>
-                </div>
-                
-                <form onsubmit="registerUser(event)">
-                    <div class="grid md:grid-cols-2 gap-6 mb-6">
-                        <div>
-                            <label class="block text-gray-700 text-sm font-bold mb-2">College</label>
-                            <select id="regCollege" class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100" disabled>
-                                <option value="">Select College</option>
-                                <option value="Sal College of Engineering">Sal College of Engineering</option>
-                                <option value="Sal Engineering and Technical Institute">Sal Engineering and Technical Institute</option>
-                                <option value="Saliter">Saliter</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-gray-700 text-sm font-bold mb-2">Enrollment Number</label>
-                            <input type="text" id="regEnrollment" class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100" readonly>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-6">
-                        <label class="block text-gray-700 text-sm font-bold mb-2">Full Name</label>
-                        <input type="text" id="regName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                    </div>
-                    
-                    <!-- Contact Verification Tabs -->
-                    <div class="mb-6">
-                        <label class="block text-gray-700 text-sm font-bold mb-2">Contact Verification</label>
-                        <div class="flex border-b border-gray-200 mb-4">
-                            <button type="button" onclick="switchContactTab('phone')" id="phoneTab" class="px-4 py-2 text-blue-600 border-b-2 border-blue-600 font-medium">
-                                <i class="fas fa-phone mr-2"></i>Phone
-                            </button>
-                            <button type="button" onclick="switchContactTab('email')" id="emailTab" class="px-4 py-2 text-gray-500 hover:text-gray-700 font-medium">
-                                <i class="fas fa-envelope mr-2"></i>Email
-                            </button>
-                        </div>
-                        
-                        <div id="phoneSection">
-                            <div class="flex gap-2 mb-4">
-                                <input type="tel" id="regPhone" class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="+91 9876543210">
-                                <button type="button" onclick="sendOTP('phone')" id="sendPhoneOTP" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors">
-                                    Send OTP
-                                </button>
-                            </div>
-                            <!-- reCAPTCHA container for phone -->
-                            <div id="recaptcha-container-phone" class="mb-4"></div>
-                        </div>
-                        
-                        <div id="emailSection" class="hidden">
-                            <div class="flex gap-2 mb-4">
-                                <input type="email" id="regEmail" class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="student@example.com">
-                                <button type="button" onclick="sendOTP('email')" id="sendEmailOTP" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors">
-                                    Send OTP
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div id="otpSection" class="hidden">
-                            <div class="flex gap-2 mb-2">
-                                <input type="text" id="otpInput" class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter 6-digit OTP" maxlength="6">
-                                <button type="button" onclick="verifyOTP()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
-                                    Verify
-                                </button>
-                            </div>
-                            <div id="otpTimer" class="text-sm text-gray-600"></div>
-                        </div>
-                        
-                        <div id="verificationSuccess" class="hidden text-green-600 text-sm">
-                            <i class="fas fa-check-circle mr-2"></i>Contact verified successfully!
-                        </div>
-                    </div>
-                    
-                    <button type="submit" id="registerBtn" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-400" disabled>
-                        Complete Registration
-                    </button>
-                </form>
-                
-                <div id="registrationError" class="mt-4 text-red-600 text-sm hidden"></div>
             </div>
         </div>
 
@@ -489,111 +353,65 @@
         </div>
     </div>
 
-    <!-- Loading Modal -->
-    <div id="loadingModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-        <div class="bg-white rounded-lg p-8 max-w-md mx-4 text-center">
-            <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <h2 class="text-xl font-bold text-gray-800 mb-2">Sending OTP...</h2>
-            <p class="text-gray-600">Please wait while we send your verification code</p>
-        </div>
-    </div>
-
     <script>
-        // 🔥 FIREBASE CONFIGURATION - YOUR ACTUAL CONFIG
-        const firebaseConfig = {
-            apiKey: "AIzaSyBwtwwoivOe0Q1THIjlMzSqJdT20kVIEJ0",
-            authDomain: "sal-college-lost-found.firebaseapp.com",
-            projectId: "sal-college-lost-found",
-            storageBucket: "sal-college-lost-found.firebasestorage.app",
-            messagingSenderId: "411864590304",
-            appId: "1:411864590304:web:24a7a1f987c0801b8ced85"
+        // Database simulation using localStorage
+        const DB = {
+            validEnrollments: [
+                { enrollment: '231130146011', college: 'Sal College of Engineering' },
+                { enrollment: '231130146002', college: 'Sal College of Engineering' },
+                { enrollment: '231130146003', college: 'Sal College of Engineering' },
+                { enrollment: '241130146011', college: 'Sal Engineering and Technical Institute' },
+                { enrollment: '241130146012', college: 'Sal Engineering and Technical Institute' },
+                { enrollment: '241130146013', college: 'Sal Engineering and Technical Institute' },
+                { enrollment: '251130146011', college: 'Saliter' },
+                { enrollment: '251130146012', college: 'Saliter' },
+                { enrollment: '251130146013', college: 'Saliter' },
+                { enrollment: '251130146014', college: 'Saliter' }
+            ],
+            
+            getUsers: () => JSON.parse(localStorage.getItem('users') || '[]'),
+            saveUsers: (users) => localStorage.setItem('users', JSON.stringify(users)),
+            
+            getFoundItems: () => JSON.parse(localStorage.getItem('foundItems') || '[]'),
+            saveFoundItems: (items) => localStorage.setItem('foundItems', JSON.stringify(items)),
+            
+            getLostItems: () => JSON.parse(localStorage.getItem('lostItems') || '[]'),
+            saveLostItems: (items) => localStorage.setItem('lostItems', JSON.stringify(items))
         };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
 
         // Global variables
         let currentUser = null;
-        let currentContactType = 'phone';
-        let otpTimer = null;
-        let otpTimeLeft = 0;
-        let isOTPVerified = false;
         let currentSearchType = 'found';
-        let confirmationResult = null;
-        let recaptchaVerifier = null;
-
-        // Valid enrollments database
-        const validEnrollments = [
-            { enrollment: '23113014011', college: 'Sal College of Engineering' },
-            { enrollment: '231130146012', college: 'Sal College of Engineering' },
-            { enrollment: '23113014013', college: 'Sal College of Engineering' },
-            { enrollment: '24113014011', college: 'Sal Engineering and Technical Institute' },
-            { enrollment: '24113014012', college: 'Sal Engineering and Technical Institute' },
-            { enrollment: '24113014013', college: 'Sal Engineering and Technical Institute' },
-            { enrollment: '25113014011', college: 'Saliter' },
-            { enrollment: '25113014012', college: 'Saliter' },
-            { enrollment: '25113014013', college: 'Saliter' },
-            { enrollment: '25113014014', college: 'Saliter' }
-        ];
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('App initialized');
-            
             // Set today's date as default
             const today = new Date().toISOString().split('T')[0];
-            const foundDateInput = document.getElementById('foundDate');
-            const lostDateInput = document.getElementById('lostDate');
-            
-            if (foundDateInput) foundDateInput.value = today;
-            if (lostDateInput) lostDateInput.value = today;
+            document.getElementById('foundDate').value = today;
+            document.getElementById('lostDate').value = today;
             
             // Check if user is already logged in
-            auth.onAuthStateChanged((user) => {
-                if (user) {
-                    loadUserData(user);
-                }
-            });
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showPage('home');
+            }
         });
 
-        // Load user data from Firestore
-        async function loadUserData(user) {
-            try {
-                const userDoc = await db.collection('users').doc(user.uid).get();
-                if (userDoc.exists) {
-                    currentUser = { uid: user.uid, ...userDoc.data() };
-                    showPage('home');
-                }
-            } catch (error) {
-                console.error('Error loading user data:', error);
-            }
-        }
-
-        // Page navigation - FIXED VERSION
+        // Page navigation
         function showPage(pageId) {
-            console.log('Showing page:', pageId);
-            
             // Hide all pages
-            const pages = ['enrollment', 'login', 'registration', 'home', 'report-found', 'report-lost', 'search', 'profile'];
+            const pages = ['enrollment', 'home', 'report-found', 'report-lost', 'search', 'profile'];
             pages.forEach(page => {
                 const element = document.getElementById(page + '-page');
-                if (element) {
-                    element.classList.add('hidden');
-                    element.classList.remove('fade-in');
-                }
+                if (element) element.classList.add('hidden');
             });
             
             // Show selected page
             const targetPage = document.getElementById(pageId + '-page');
             if (targetPage) {
                 targetPage.classList.remove('hidden');
-                setTimeout(() => {
-                    targetPage.classList.add('fade-in');
-                }, 10);
-            } else {
-                console.error('Page not found:', pageId + '-page');
+                targetPage.classList.add('fade-in');
             }
             
             // Show/hide navbar
@@ -608,593 +426,184 @@
             }
             
             // Hide profile menu
-            const profileMenu = document.getElementById('profileMenu');
-            if (profileMenu) profileMenu.classList.add('hidden');
+            document.getElementById('profileMenu').classList.add('hidden');
         }
 
-        // Enrollment verification - FIXED VERSION
+        // Enrollment verification
         function verifyEnrollment(event) {
             event.preventDefault();
-            console.log('Verifying enrollment...');
-            
-            const enrollmentInput = document.getElementById('enrollmentInput');
+            const enrollment = document.getElementById('enrollmentInput').value.trim().toUpperCase();
             const errorDiv = document.getElementById('enrollmentError');
             
-            if (!enrollmentInput || !errorDiv) {
-                console.error('Required elements not found');
-                return;
-            }
-            
-            const enrollment = enrollmentInput.value.trim().toUpperCase();
-            console.log('Checking enrollment:', enrollment);
-            
-            const validEnrollment = validEnrollments.find(e => e.enrollment === enrollment);
+            const validEnrollment = DB.validEnrollments.find(e => e.enrollment === enrollment);
             
             if (validEnrollment) {
-                console.log('Valid enrollment found:', validEnrollment);
+                // Create a user automatically based on enrollment
+                const users = DB.getUsers();
+                let user = users.find(u => u.enrollment === enrollment);
                 
-                // Pre-fill registration form
-                const regEnrollmentInput = document.getElementById('regEnrollment');
-                const regCollegeSelect = document.getElementById('regCollege');
+                if (!user) {
+                    // Create new user automatically
+                    user = {
+                        id: Date.now().toString(),
+                        enrollment: enrollment,
+                        college: validEnrollment.college,
+                        name: "Student " + enrollment, // Default name
+                        registeredAt: new Date().toISOString()
+                    };
+                    
+                    users.push(user);
+                    DB.saveUsers(users);
+                }
                 
-                if (regEnrollmentInput) regEnrollmentInput.value = enrollment;
-                if (regCollegeSelect) regCollegeSelect.value = validEnrollment.college;
+                // Log in user
+                currentUser = user;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
                 
-                showPage('registration');
+                showPage('home');
                 errorDiv.classList.add('hidden');
             } else {
-                console.log('Invalid enrollment');
                 errorDiv.textContent = 'Enrollment not found. Please check your number or contact administration.';
                 errorDiv.classList.remove('hidden');
             }
         }
 
-        // Contact tab switching
-        function switchContactTab(type) {
-            console.log('Switching to contact type:', type);
-            currentContactType = type;
-            
-            // Update tab appearance
-            const phoneTab = document.getElementById('phoneTab');
-            const emailTab = document.getElementById('emailTab');
-            
-            if (phoneTab) {
-                phoneTab.className = type === 'phone' 
-                    ? 'px-4 py-2 text-blue-600 border-b-2 border-blue-600 font-medium'
-                    : 'px-4 py-2 text-gray-500 hover:text-gray-700 font-medium';
-            }
-            
-            if (emailTab) {
-                emailTab.className = type === 'email'
-                    ? 'px-4 py-2 text-blue-600 border-b-2 border-blue-600 font-medium'
-                    : 'px-4 py-2 text-gray-500 hover:text-gray-700 font-medium';
-            }
-            
-            // Show/hide sections
-            const phoneSection = document.getElementById('phoneSection');
-            const emailSection = document.getElementById('emailSection');
-            
-            if (phoneSection) phoneSection.classList.toggle('hidden', type !== 'phone');
-            if (emailSection) emailSection.classList.toggle('hidden', type !== 'email');
-            
-            // Reset verification state
-            resetOTPSection();
-        }
-
-        // Setup reCAPTCHA for phone verification (Disabled for speed)
-        function setupRecaptcha() {
-            // Disabled for demo - reCAPTCHA causes delays
-            console.log('reCAPTCHA setup skipped for faster demo');
-        }
-
-        // Send REAL OTP via SMS/Email
-        async function sendOTP(type) {
-            console.log('Sending REAL OTP for type:', type);
-            
-            const contact = type === 'phone' 
-                ? document.getElementById('regPhone').value.trim()
-                : document.getElementById('regEmail').value.trim();
-            
-            if (!contact) {
-                alert('Please enter your ' + type + ' number/address');
-                return;
-            }
-
-            // Show loading
-            const loadingModal = document.getElementById('loadingModal');
-            if (loadingModal) loadingModal.classList.remove('hidden');
-            
-            try {
-                // Generate random 6-digit OTP
-                const generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-                window.currentOTP = generatedOTP; // Store for verification
-                
-                if (type === 'phone') {
-                    // Send REAL SMS using Firebase Phone Auth
-                    let phoneNumber = contact;
-                    if (!phoneNumber.startsWith('+')) {
-                        phoneNumber = '+91' + phoneNumber.replace(/\D/g, ''); // Clean and add +91
-                    }
-                    
-                    // Setup reCAPTCHA for phone verification
-                    if (!recaptchaVerifier) {
-                        recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container-phone', {
-                            'size': 'normal',
-                            'callback': function(response) {
-                                console.log('reCAPTCHA solved');
-                            },
-                            'expired-callback': function() {
-                                console.log('reCAPTCHA expired');
-                            }
-                        });
-                        recaptchaVerifier.render();
-                    }
-                    
-                    // Send SMS via Firebase
-                    confirmationResult = await auth.signInWithPhoneNumber(phoneNumber, recaptchaVerifier);
-                    console.log('📱 REAL SMS OTP sent to:', phoneNumber);
-                    alert('📱 Real SMS OTP sent to your phone number!');
-                    
-                } else {
-                    // Send REAL EMAIL using EmailJS
-                    const emailData = {
-                        to_email: contact,
-                        otp_code: generatedOTP,
-                        user_name: document.getElementById('regName').value || 'Student',
-                        service_id: 'service_sal_college',
-                        template_id: 'template_otp_verification',
-                        user_id: 'sal_college_public_key'
-                    };
-                    
-                    // Send email via EmailJS API
-                    const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            service_id: 'service_sal_college',
-                            template_id: 'template_otp_verification',
-                            user_id: 'sal_college_public_key',
-                            template_params: {
-                                to_email: contact,
-                                otp_code: generatedOTP,
-                                user_name: emailData.user_name,
-                                college_name: 'Sal College of Engineering'
-                            }
-                        })
-                    });
-                    
-                    if (response.ok) {
-                        console.log('📧 REAL EMAIL OTP sent to:', contact);
-                        alert('📧 Real OTP sent to your email address!');
-                    } else {
-                        throw new Error('Failed to send email OTP');
-                    }
-                }
-                
-                // Show OTP section
-                const otpSection = document.getElementById('otpSection');
-                if (otpSection) otpSection.classList.remove('hidden');
-                startOTPTimer();
-                
-                // Disable send button
-                const sendBtn = type === 'phone' 
-                    ? document.getElementById('sendPhoneOTP')
-                    : document.getElementById('sendEmailOTP');
-                if (sendBtn) {
-                    sendBtn.disabled = true;
-                    sendBtn.textContent = 'OTP Sent';
-                    sendBtn.classList.add('bg-gray-400');
-                    sendBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
-                }
-                
-            } catch (error) {
-                console.error('Error sending REAL OTP:', error);
-                alert('Error sending OTP: ' + error.message);
-                
-                // Re-enable send button on error
-                const sendBtn = type === 'phone' 
-                    ? document.getElementById('sendPhoneOTP')
-                    : document.getElementById('sendEmailOTP');
-                if (sendBtn) {
-                    sendBtn.disabled = false;
-                    sendBtn.textContent = 'Send OTP';
-                    sendBtn.classList.remove('bg-gray-400');
-                    sendBtn.classList.add('bg-green-600', 'hover:bg-green-700');
-                }
-            } finally {
-                if (loadingModal) loadingModal.classList.add('hidden');
-            }
-        }
-
-        // Start OTP timer
-        function startOTPTimer() {
-            otpTimeLeft = 300; // 5 minutes
-            const timerDiv = document.getElementById('otpTimer');
-            
-            if (!timerDiv) return;
-            
-            otpTimer = setInterval(() => {
-                const minutes = Math.floor(otpTimeLeft / 60);
-                const seconds = otpTimeLeft % 60;
-                
-                timerDiv.innerHTML = `<i class="fas fa-clock mr-1"></i>OTP expires in ${minutes}:${seconds.toString().padStart(2, '0')}`;
-                
-                if (otpTimeLeft <= 60) {
-                    timerDiv.classList.add('timer-warning');
-                }
-                
-                if (otpTimeLeft <= 0) {
-                    clearInterval(otpTimer);
-                    timerDiv.innerHTML = '<i class="fas fa-times-circle mr-1"></i>OTP expired. Please request a new one.';
-                    confirmationResult = null;
-                }
-                
-                otpTimeLeft--;
-            }, 1000);
-        }
-
-        // Verify REAL OTP
-        async function verifyOTP() {
-            const otpInput = document.getElementById('otpInput');
-            if (!otpInput) return;
-            
-            const enteredOTP = otpInput.value.trim();
-            
-            if (!enteredOTP || enteredOTP.length !== 6) {
-                alert('Please enter a 6-digit OTP.');
-                return;
-            }
-            
-            try {
-                let verificationSuccess = false;
-                
-                if (currentContactType === 'phone' && confirmationResult) {
-                    // Verify SMS OTP via Firebase
-                    try {
-                        const result = await confirmationResult.confirm(enteredOTP);
-                        console.log('✅ SMS OTP verified successfully!', result);
-                        verificationSuccess = true;
-                        
-                        // Store the Firebase user for later use
-                        window.firebaseUser = result.user;
-                        
-                    } catch (error) {
-                        console.error('SMS OTP verification failed:', error);
-                        alert('❌ Invalid SMS OTP. Please check and try again.');
-                        otpInput.focus();
-                        return;
-                    }
-                    
-                } else if (currentContactType === 'email') {
-                    // Verify Email OTP (compare with stored OTP)
-                    if (enteredOTP === window.currentOTP) {
-                        console.log('✅ Email OTP verified successfully!');
-                        verificationSuccess = true;
-                    } else {
-                        alert('❌ Invalid Email OTP. Please check and try again.');
-                        otpInput.focus();
-                        return;
-                    }
-                }
-                
-                if (verificationSuccess) {
-                    // OTP verified successfully
-                    if (otpTimer) clearInterval(otpTimer);
-                    
-                    const otpSection = document.getElementById('otpSection');
-                    const verificationSuccessDiv = document.getElementById('verificationSuccess');
-                    const registerBtn = document.getElementById('registerBtn');
-                    
-                    if (otpSection) otpSection.classList.add('hidden');
-                    if (verificationSuccessDiv) verificationSuccessDiv.classList.remove('hidden');
-                    if (registerBtn) {
-                        registerBtn.disabled = false;
-                        registerBtn.classList.remove('bg-gray-400');
-                        registerBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
-                    }
-                    
-                    isOTPVerified = true;
-                    
-                    // Clear the stored OTP for security
-                    window.currentOTP = null;
-                    
-                    alert('✅ Contact verified successfully! You can now complete registration.');
-                }
-                
-            } catch (error) {
-                console.error('Error verifying OTP:', error);
-                alert('Error verifying OTP: ' + error.message);
-            }
-        }
-
-        // Reset OTP section
-        function resetOTPSection() {
-            const otpSection = document.getElementById('otpSection');
-            const verificationSuccess = document.getElementById('verificationSuccess');
-            const registerBtn = document.getElementById('registerBtn');
-            const otpInput = document.getElementById('otpInput');
-            
-            if (otpSection) otpSection.classList.add('hidden');
-            if (verificationSuccess) verificationSuccess.classList.add('hidden');
-            if (registerBtn) registerBtn.disabled = true;
-            if (otpInput) {
-                otpInput.value = '';
-                otpInput.placeholder = 'Enter 6-digit OTP';
-            }
-            
-            isOTPVerified = false;
-            
-            if (otpTimer) {
-                clearInterval(otpTimer);
-                otpTimer = null;
-            }
-            
-            // Re-enable send buttons
-            const sendPhoneOTP = document.getElementById('sendPhoneOTP');
-            const sendEmailOTP = document.getElementById('sendEmailOTP');
-            
-            if (sendPhoneOTP) {
-                sendPhoneOTP.disabled = false;
-                sendPhoneOTP.textContent = 'Send OTP';
-            }
-            if (sendEmailOTP) {
-                sendEmailOTP.disabled = false;
-                sendEmailOTP.textContent = 'Send OTP';
-            }
-            
-            // Clear reCAPTCHA
-            if (recaptchaVerifier) {
-                recaptchaVerifier.clear();
-                recaptchaVerifier = null;
-            }
-        }
-
-        // Register user (Simplified Fast Version)
-        async function registerUser(event) {
+        // Submit found item
+        function submitFoundItem(event) {
             event.preventDefault();
             
-            if (!isOTPVerified) {
-                alert('Please verify your contact information first.');
-                return;
-            }
+            const itemData = {
+                id: Date.now().toString(),
+                userId: currentUser.id,
+                category: document.getElementById('foundCategory').value,
+                itemName: document.getElementById('foundItemName').value.trim(),
+                location: document.getElementById('foundLocation').value.trim(),
+                date: document.getElementById('foundDate').value,
+                description: document.getElementById('foundDescription').value.trim(),
+                image: null, // In real app, would handle file upload
+                submittedAt: new Date().toISOString(),
+                isReturned: false
+            };
             
-            try {
-                const userData = {
-                    enrollment: document.getElementById('regEnrollment').value,
-                    college: document.getElementById('regCollege').value,
-                    name: document.getElementById('regName').value.trim(),
-                    contactType: currentContactType,
-                    contact: currentContactType === 'phone' 
-                        ? document.getElementById('regPhone').value.trim()
-                        : document.getElementById('regEmail').value.trim(),
-                    registeredAt: new Date().toISOString(),
-                    uid: 'user_' + Date.now() // Generate simple UID for demo
+            // Handle image upload (simplified for demo)
+            const imageFile = document.getElementById('foundImage').files[0];
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    itemData.image = e.target.result;
+                    saveFoundItem(itemData);
                 };
-                
-                // Store user data locally for demo (faster than Firestore)
-                localStorage.setItem('currentUser', JSON.stringify(userData));
-                currentUser = userData;
-                
-                console.log('✅ User registered successfully:', userData);
-                
-                showSuccessModal('Registration Complete!', 'Welcome to Sal College Lost & Found System. You can now report and search for items.');
-                
-            } catch (error) {
-                console.error('Error registering user:', error);
-                const registrationError = document.getElementById('registrationError');
-                if (registrationError) {
-                    registrationError.textContent = 'Registration failed: ' + error.message;
-                    registrationError.classList.remove('hidden');
-                }
+                reader.readAsDataURL(imageFile);
+            } else {
+                saveFoundItem(itemData);
             }
         }
 
-        // Login user
-        async function loginUser(event) {
-            event.preventDefault();
+        function saveFoundItem(itemData) {
+            const foundItems = DB.getFoundItems();
+            foundItems.push(itemData);
+            DB.saveFoundItems(foundItems);
             
-            const loginEnrollment = document.getElementById('loginEnrollment');
-            const loginContact = document.getElementById('loginContact');
-            const errorDiv = document.getElementById('loginError');
+            // Reset form
+            document.getElementById('foundCategory').value = '';
+            document.getElementById('foundItemName').value = '';
+            document.getElementById('foundLocation').value = '';
+            document.getElementById('foundDescription').value = '';
+            document.getElementById('foundImage').value = '';
             
-            if (!loginEnrollment || !loginContact || !errorDiv) return;
-            
-            const enrollment = loginEnrollment.value.trim().toUpperCase();
-            const contact = loginContact.value.trim();
-            
-            try {
-                // Query Firestore for user with matching enrollment and contact
-                const usersQuery = await db.collection('users')
-                    .where('enrollment', '==', enrollment)
-                    .where('contact', '==', contact)
-                    .get();
-                
-                if (usersQuery.empty) {
-                    errorDiv.textContent = 'Invalid enrollment number or contact information.';
-                    errorDiv.classList.remove('hidden');
-                    return;
-                }
-                
-                const userDoc = usersQuery.docs[0];
-                const userData = userDoc.data();
-                
-                // Send OTP based on contact type
-                if (userData.contactType === 'phone') {
-                    setupRecaptcha();
-                    let phoneNumber = userData.contact;
-                    if (!phoneNumber.startsWith('+')) {
-                        phoneNumber = '+91' + phoneNumber;
-                    }
-                    
-                    confirmationResult = await auth.signInWithPhoneNumber(phoneNumber, recaptchaVerifier);
-                    
-                } else {
-                    // For email login, use Firebase Auth
-                    const tempPassword = Math.random().toString(36).slice(-8);
-                    await auth.sendPasswordResetEmail(userData.contact);
-                    alert('Password reset email sent. Please check your email.');
-                    return;
-                }
-                
-                // Show OTP input for phone
-                const otpInput = prompt('Enter the OTP sent to your phone:');
-                if (otpInput && confirmationResult) {
-                    await confirmationResult.confirm(otpInput);
-                    currentUser = { uid: userDoc.id, ...userData };
-                    showPage('home');
-                    errorDiv.classList.add('hidden');
-                }
-                
-            } catch (error) {
-                console.error('Error during login:', error);
-                errorDiv.textContent = 'Login failed: ' + error.message;
-                errorDiv.classList.remove('hidden');
-            }
+            showSuccessModal('Item Reported!', 'Your found item has been added to the database. Other students can now search for it.');
         }
 
-        // Submit found item (Save to Firestore)
-        async function submitFoundItem(event) {
+        // Submit lost item
+        function submitLostItem(event) {
             event.preventDefault();
             
-            try {
-                const itemData = {
-                    userId: currentUser.uid,
-                    category: document.getElementById('foundCategory').value,
-                    itemName: document.getElementById('foundItemName').value.trim(),
-                    location: document.getElementById('foundLocation').value.trim(),
-                    date: document.getElementById('foundDate').value,
-                    description: document.getElementById('foundDescription').value.trim(),
-                    submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    isReturned: false,
-                    type: 'found'
+            const itemData = {
+                id: Date.now().toString(),
+                userId: currentUser.id,
+                category: document.getElementById('lostCategory').value,
+                itemName: document.getElementById('lostItemName').value.trim(),
+                location: document.getElementById('lostLocation').value.trim(),
+                date: document.getElementById('lostDate').value,
+                description: document.getElementById('lostDescription').value.trim(),
+                image: null,
+                submittedAt: new Date().toISOString()
+            };
+            
+            // Handle image upload (simplified for demo)
+            const imageFile = document.getElementById('lostImage').files[0];
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    itemData.image = e.target.result;
+                    saveLostItem(itemData);
                 };
-                
-                // Save to Firestore
-                await db.collection('items').add(itemData);
-                
-                // Reset form
-                document.getElementById('foundCategory').value = '';
-                document.getElementById('foundItemName').value = '';
-                document.getElementById('foundLocation').value = '';
-                document.getElementById('foundDescription').value = '';
-                const foundImage = document.getElementById('foundImage');
-                if (foundImage) foundImage.value = '';
-                
-                showSuccessModal('Item Reported!', 'Your found item has been added to the database. Other students can now search for it.');
-                
-            } catch (error) {
-                console.error('Error submitting found item:', error);
-                alert('Error submitting item: ' + error.message);
+                reader.readAsDataURL(imageFile);
+            } else {
+                saveLostItem(itemData);
             }
         }
 
-        // Submit lost item (Save to Firestore)
-        async function submitLostItem(event) {
-            event.preventDefault();
+        function saveLostItem(itemData) {
+            const lostItems = DB.getLostItems();
+            lostItems.push(itemData);
+            DB.saveLostItems(lostItems);
             
-            try {
-                const itemData = {
-                    userId: currentUser.uid,
-                    category: document.getElementById('lostCategory').value,
-                    itemName: document.getElementById('lostItemName').value.trim(),
-                    location: document.getElementById('lostLocation').value.trim(),
-                    date: document.getElementById('lostDate').value,
-                    description: document.getElementById('lostDescription').value.trim(),
-                    submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    type: 'lost'
-                };
-                
-                // Save to Firestore
-                await db.collection('items').add(itemData);
-                
-                // Reset form
-                document.getElementById('lostCategory').value = '';
-                document.getElementById('lostItemName').value = '';
-                document.getElementById('lostLocation').value = '';
-                document.getElementById('lostDescription').value = '';
-                const lostImage = document.getElementById('lostImage');
-                if (lostImage) lostImage.value = '';
-                
-                showSuccessModal('Item Reported!', 'Your lost item has been added to the database. We\'ll help you find it!');
-                
-            } catch (error) {
-                console.error('Error submitting lost item:', error);
-                alert('Error submitting item: ' + error.message);
-            }
+            // Reset form
+            document.getElementById('lostCategory').value = '';
+            document.getElementById('lostItemName').value = '';
+            document.getElementById('lostLocation').value = '';
+            document.getElementById('lostDescription').value = '';
+            document.getElementById('lostImage').value = '';
+            
+            showSuccessModal('Item Reported!', 'Your lost item has been added to the database. We\'ll help you find it!');
         }
 
-        // Search functionality (Query Firestore)
+        // Search functionality
         function switchSearchTab(type) {
             currentSearchType = type;
             
-            const searchFoundTab = document.getElementById('searchFoundTab');
-            const searchLostTab = document.getElementById('searchLostTab');
+            document.getElementById('searchFoundTab').className = type === 'found'
+                ? 'px-4 py-2 text-green-600 border-b-2 border-green-600 font-medium'
+                : 'px-4 py-2 text-gray-500 hover:text-gray-700 font-medium';
             
-            if (searchFoundTab) {
-                searchFoundTab.className = type === 'found'
-                    ? 'px-4 py-2 text-green-600 border-b-2 border-green-600 font-medium'
-                    : 'px-4 py-2 text-gray-500 hover:text-gray-700 font-medium';
-            }
-            
-            if (searchLostTab) {
-                searchLostTab.className = type === 'lost'
-                    ? 'px-4 py-2 text-red-600 border-b-2 border-red-600 font-medium'
-                    : 'px-4 py-2 text-gray-500 hover:text-gray-700 font-medium';
-            }
+            document.getElementById('searchLostTab').className = type === 'lost'
+                ? 'px-4 py-2 text-red-600 border-b-2 border-red-600 font-medium'
+                : 'px-4 py-2 text-gray-500 hover:text-gray-700 font-medium';
             
             performSearch();
         }
 
-        async function performSearch() {
-            const searchInput = document.getElementById('searchInput');
-            const searchCategory = document.getElementById('searchCategory');
+        function performSearch() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('searchCategory').value;
             
-            if (!searchInput || !searchCategory) return;
+            const items = currentSearchType === 'found' 
+                ? DB.getFoundItems().filter(item => !item.isReturned)
+                : DB.getLostItems();
             
-            const searchTerm = searchInput.value.toLowerCase();
-            const category = searchCategory.value;
+            let filteredItems = items;
             
-            try {
-                let query = db.collection('items').where('type', '==', currentSearchType);
-                
-                if (currentSearchType === 'found') {
-                    query = query.where('isReturned', '==', false);
-                }
-                
-                if (category) {
-                    query = query.where('category', '==', category);
-                }
-                
-                const snapshot = await query.get();
-                let items = [];
-                
-                snapshot.forEach(doc => {
-                    items.push({ id: doc.id, ...doc.data() });
-                });
-                
-                // Filter by search term (client-side filtering for text search)
-                if (searchTerm) {
-                    items = items.filter(item => 
-                        item.itemName.toLowerCase().includes(searchTerm) ||
-                        (item.description && item.description.toLowerCase().includes(searchTerm)) ||
-                        item.location.toLowerCase().includes(searchTerm)
-                    );
-                }
-                
-                displaySearchResults(items, searchTerm);
-                
-            } catch (error) {
-                console.error('Error searching items:', error);
+            // Filter by category
+            if (category) {
+                filteredItems = filteredItems.filter(item => item.category === category);
             }
+            
+            // Filter by search term
+            if (searchTerm) {
+                filteredItems = filteredItems.filter(item => 
+                    item.itemName.toLowerCase().includes(searchTerm) ||
+                    item.description.toLowerCase().includes(searchTerm) ||
+                    item.location.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            displaySearchResults(filteredItems, searchTerm);
         }
 
         function displaySearchResults(items, searchTerm) {
             const resultsContainer = document.getElementById('searchResults');
             const noResultsDiv = document.getElementById('noResults');
-            
-            if (!resultsContainer || !noResultsDiv) return;
             
             if (items.length === 0) {
                 resultsContainer.innerHTML = '';
@@ -1205,9 +614,13 @@
             noResultsDiv.classList.add('hidden');
             
             resultsContainer.innerHTML = items.map(item => {
+                const users = DB.getUsers();
+                const user = users.find(u => u.id === item.userId);
+                const userName = user ? user.name : 'Unknown User';
+                
                 // Highlight search terms
                 const highlightText = (text) => {
-                    if (!searchTerm || !text) return text;
+                    if (!searchTerm) return text;
                     const regex = new RegExp(`(${searchTerm})`, 'gi');
                     return text.replace(regex, '<span class="highlight">$1</span>');
                 };
@@ -1229,9 +642,12 @@
                             <span class="text-xs text-gray-400">${new Date(item.date).toLocaleDateString()}</span>
                         </div>
                         
+                        ${item.image ? `<img src="${item.image}" alt="Item image" class="w-full h-32 object-cover rounded-md mb-4">` : ''}
+                        
                         <div class="space-y-2 text-sm">
                             <p><strong>Location:</strong> ${highlightText(item.location)}</p>
                             ${item.description ? `<p><strong>Description:</strong> ${highlightText(item.description)}</p>` : ''}
+                            <p><strong>Reported by:</strong> ${userName}</p>
                         </div>
                         
                         <div class="mt-4 pt-4 border-t border-gray-200">
@@ -1244,177 +660,122 @@
             }).join('');
         }
 
-        // Profile management (Load from Firestore)
-        async function loadProfileData() {
+        // Profile management
+        function loadProfileData() {
             if (!currentUser) return;
             
-            const profileInfo = document.getElementById('profileInfo');
-            if (profileInfo) {
-                profileInfo.textContent = 
-                    `${currentUser.name} • ${currentUser.enrollment} • ${currentUser.college}`;
+            document.getElementById('profileInfo').textContent = 
+                `${currentUser.name} • ${currentUser.enrollment} • ${currentUser.college}`;
+            
+            // Load user's found items
+            const foundItems = DB.getFoundItems().filter(item => item.userId === currentUser.id);
+            const myFoundItemsContainer = document.getElementById('myFoundItems');
+            
+            if (foundItems.length === 0) {
+                myFoundItemsContainer.innerHTML = '<p class="text-gray-500 text-center py-4">No found items reported yet.</p>';
+            } else {
+                myFoundItemsContainer.innerHTML = foundItems.map(item => `
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-semibold text-gray-800">${item.itemName}</h4>
+                            <span class="text-xs text-gray-500">${new Date(item.date).toLocaleDateString()}</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">${item.category} • ${item.location}</p>
+                        ${item.description ? `<p class="text-sm text-gray-500 mb-3">${item.description}</p>` : ''}
+                        
+                        ${!item.isReturned ? `
+                            <button onclick="markAsReturned('${item.id}')" class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 transition-colors">
+                                Mark as Returned
+                            </button>
+                        ` : `
+                            <span class="text-green-600 text-sm font-medium">
+                                <i class="fas fa-check-circle mr-1"></i>Returned
+                            </span>
+                        `}
+                    </div>
+                `).join('');
             }
             
-            try {
-                // Load user's items
-                const itemsSnapshot = await db.collection('items')
-                    .where('userId', '==', currentUser.uid)
-                    .get();
-                
-                const foundItems = [];
-                const lostItems = [];
-                
-                itemsSnapshot.forEach(doc => {
-                    const item = { id: doc.id, ...doc.data() };
-                    if (item.type === 'found') {
-                        foundItems.push(item);
-                    } else {
-                        lostItems.push(item);
-                    }
-                });
-                
-                // Display found items
-                const myFoundItemsContainer = document.getElementById('myFoundItems');
-                if (myFoundItemsContainer) {
-                    if (foundItems.length === 0) {
-                        myFoundItemsContainer.innerHTML = '<p class="text-gray-500 text-center py-4">No found items reported yet.</p>';
-                    } else {
-                        myFoundItemsContainer.innerHTML = foundItems.map(item => `
-                            <div class="border border-gray-200 rounded-lg p-4">
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-semibold text-gray-800">${item.itemName}</h4>
-                                    <span class="text-xs text-gray-500">${new Date(item.date).toLocaleDateString()}</span>
-                                </div>
-                                <p class="text-sm text-gray-600 mb-2">${item.category} • ${item.location}</p>
-                                ${item.description ? `<p class="text-sm text-gray-500 mb-3">${item.description}</p>` : ''}
-                                
-                                ${!item.isReturned ? `
-                                    <button onclick="markAsReturned('${item.id}')" class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 transition-colors">
-                                        Mark as Returned
-                                    </button>
-                                ` : `
-                                    <span class="text-green-600 text-sm font-medium">
-                                        <i class="fas fa-check-circle mr-1"></i>Returned
-                                    </span>
-                                `}
-                            </div>
-                        `).join('');
-                    }
-                }
-                
-                // Display lost items
-                const myLostItemsContainer = document.getElementById('myLostItems');
-                if (myLostItemsContainer) {
-                    if (lostItems.length === 0) {
-                        myLostItemsContainer.innerHTML = '<p class="text-gray-500 text-center py-4">No lost items reported yet.</p>';
-                    } else {
-                        myLostItemsContainer.innerHTML = lostItems.map(item => `
-                            <div class="border border-gray-200 rounded-lg p-4">
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-semibold text-gray-800">${item.itemName}</h4>
-                                    <span class="text-xs text-gray-500">${new Date(item.date).toLocaleDateString()}</span>
-                                </div>
-                                <p class="text-sm text-gray-600 mb-2">${item.category} • ${item.location}</p>
-                                ${item.description ? `<p class="text-sm text-gray-500">${item.description}</p>` : ''}
-                            </div>
-                        `).join('');
-                    }
-                }
-                
-            } catch (error) {
-                console.error('Error loading profile data:', error);
+            // Load user's lost items
+            const lostItems = DB.getLostItems().filter(item => item.userId === currentUser.id);
+            const myLostItemsContainer = document.getElementById('myLostItems');
+            
+            if (lostItems.length === 0) {
+                myLostItemsContainer.innerHTML = '<p class="text-gray-500 text-center py-4">No lost items reported yet.</p>';
+            } else {
+                myLostItemsContainer.innerHTML = lostItems.map(item => `
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-semibold text-gray-800">${item.itemName}</h4>
+                            <span class="text-xs text-gray-500">${new Date(item.date).toLocaleDateString()}</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">${item.category} • ${item.location}</p>
+                        ${item.description ? `<p class="text-sm text-gray-500">${item.description}</p>` : ''}
+                    </div>
+                `).join('');
             }
         }
 
-        // Mark item as returned (Update Firestore)
-        async function markAsReturned(itemId) {
-            try {
-                await db.collection('items').doc(itemId).update({
-                    isReturned: true,
-                    returnedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
+        // Mark item as returned
+        function markAsReturned(itemId) {
+            const foundItems = DB.getFoundItems();
+            const itemIndex = foundItems.findIndex(item => item.id === itemId);
+            
+            if (itemIndex !== -1) {
+                foundItems[itemIndex].isReturned = true;
+                DB.saveFoundItems(foundItems);
                 
                 showSuccessModal('Woahhh! 🎉', 'You did a great job helping a fellow student!');
                 loadProfileData(); // Refresh profile data
-                
-            } catch (error) {
-                console.error('Error marking item as returned:', error);
-                alert('Error updating item: ' + error.message);
             }
         }
 
-        // Update dashboard statistics (Query Firestore)
-        async function updateDashboardStats() {
-            try {
-                const currentMonth = new Date().getMonth();
-                const currentYear = new Date().getFullYear();
-                
-                // Get all items
-                const itemsSnapshot = await db.collection('items').get();
-                
-                let foundThisMonth = 0;
-                let itemsReturned = 0;
-                let activeLostReports = 0;
-                
-                itemsSnapshot.forEach(doc => {
-                    const item = doc.data();
-                    
-                    if (item.type === 'found') {
-                        const itemDate = new Date(item.date);
-                        if (itemDate.getMonth() === currentMonth && itemDate.getFullYear() === currentYear) {
-                            foundThisMonth++;
-                        }
-                        if (item.isReturned) {
-                            itemsReturned++;
-                        }
-                    } else if (item.type === 'lost') {
-                        activeLostReports++;
-                    }
-                });
-                
-                const foundThisMonthEl = document.getElementById('foundThisMonth');
-                const itemsReturnedEl = document.getElementById('itemsReturned');
-                const activeLostReportsEl = document.getElementById('activeLostReports');
-                
-                if (foundThisMonthEl) foundThisMonthEl.textContent = foundThisMonth;
-                if (itemsReturnedEl) itemsReturnedEl.textContent = itemsReturned;
-                if (activeLostReportsEl) activeLostReportsEl.textContent = activeLostReports;
-                
-            } catch (error) {
-                console.error('Error updating dashboard stats:', error);
-            }
+        // Update dashboard statistics
+        function updateDashboardStats() {
+            const foundItems = DB.getFoundItems();
+            const lostItems = DB.getLostItems();
+            
+            // Items found this month
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+            const foundThisMonth = foundItems.filter(item => {
+                const itemDate = new Date(item.date);
+                return itemDate.getMonth() === currentMonth && itemDate.getFullYear() === currentYear;
+            }).length;
+            
+            // Items returned
+            const itemsReturned = foundItems.filter(item => item.isReturned).length;
+            
+            // Active lost reports
+            const activeLostReports = lostItems.length;
+            
+            document.getElementById('foundThisMonth').textContent = foundThisMonth;
+            document.getElementById('itemsReturned').textContent = itemsReturned;
+            document.getElementById('activeLostReports').textContent = activeLostReports;
         }
 
         // Profile menu toggle
         function toggleProfileMenu() {
             const menu = document.getElementById('profileMenu');
-            if (menu) menu.classList.toggle('hidden');
+            menu.classList.toggle('hidden');
         }
 
         // Logout
-        async function logout() {
-            try {
-                await auth.signOut();
-                currentUser = null;
-                showPage('enrollment');
-            } catch (error) {
-                console.error('Error signing out:', error);
-            }
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            showPage('enrollment');
         }
 
         // Success modal
         function showSuccessModal(title, message) {
-            const successTitle = document.getElementById('successTitle');
-            const successMessage = document.getElementById('successMessage');
-            const successModal = document.getElementById('successModal');
-            
-            if (successTitle) successTitle.textContent = title;
-            if (successMessage) successMessage.textContent = message;
-            if (successModal) successModal.classList.remove('hidden');
+            document.getElementById('successTitle').textContent = title;
+            document.getElementById('successMessage').textContent = message;
+            document.getElementById('successModal').classList.remove('hidden');
         }
 
         function closeSuccessModal() {
-            const successModal = document.getElementById('successModal');
-            if (successModal) successModal.classList.add('hidden');
+            document.getElementById('successModal').classList.add('hidden');
             showPage('home');
         }
 
@@ -1424,10 +785,9 @@
             const profileButton = event.target.closest('button');
             
             if (!profileButton || !profileButton.onclick || profileButton.onclick.toString().indexOf('toggleProfileMenu') === -1) {
-                if (profileMenu) profileMenu.classList.add('hidden');
+                profileMenu.classList.add('hidden');
             }
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9737db04230e0333',t:'MTc1NTkyMzIyNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97378c9c10980330',t:'MTc1NTkyMDAxNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
-
